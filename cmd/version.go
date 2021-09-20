@@ -1,10 +1,11 @@
 package cmd
 
 import (
-	"github.com/blackjack200/gracticerssential/server"
+	"runtime"
+
+	"github.com/Blackjack200/GracticeEssential/server"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/sandertv/gophertunnel/minecraft/protocol"
-	"runtime"
 )
 
 type Version struct{}

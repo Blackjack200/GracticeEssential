@@ -1,4 +1,4 @@
-module github.com/blackjack200/gracticerssential
+module github.com/Blackjack200/GracticeEssential
 
 go 1.17
 

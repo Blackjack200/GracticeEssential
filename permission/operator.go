@@ -1,9 +1,10 @@
 package permission
 
 import (
-	"github.com/blackjack200/gracticerssential/util"
 	"path/filepath"
 	"strings"
+
+	"github.com/Blackjack200/GracticeEssential/util"
 )
 
 var _opFile = filepath.Join(util.WorkingPath, "ops.txt")

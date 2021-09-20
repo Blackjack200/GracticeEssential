@@ -1,10 +1,11 @@
 package permission
 
 import (
-	"github.com/blackjack200/gracticerssential/util"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/Blackjack200/GracticeEssential/util"
 )
 
 var _mu = sync.Mutex{}

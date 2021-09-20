@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/df-mc/dragonfly/server/cmd"
 	"sort"
+
+	"github.com/df-mc/dragonfly/server/cmd"
 )
 
 type Help struct{}

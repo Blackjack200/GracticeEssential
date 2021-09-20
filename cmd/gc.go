@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"github.com/blackjack200/gracticerssential/permission"
-	"github.com/df-mc/dragonfly/server/cmd"
 	"runtime"
+
+	"github.com/Blackjack200/GracticeEssential/permission"
+	"github.com/df-mc/dragonfly/server/cmd"
 )
 
 type GC struct{}

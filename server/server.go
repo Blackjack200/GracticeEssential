@@ -2,11 +2,12 @@ package server
 
 import (
 	"fmt"
-	"github.com/blackjack200/gracticerssential/util"
+	"io/ioutil"
+
+	"github.com/Blackjack200/GracticeEssential/util"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/pelletier/go-toml"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
 )
 
 var _global *server.Server

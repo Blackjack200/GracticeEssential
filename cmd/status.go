@@ -1,10 +1,11 @@
 package cmd
 
 import (
-	"github.com/blackjack200/gracticerssential/permission"
-	"github.com/blackjack200/gracticerssential/server"
-	"github.com/df-mc/dragonfly/server/cmd"
 	"runtime"
+
+	"github.com/Blackjack200/GracticeEssential/permission"
+	"github.com/Blackjack200/GracticeEssential/server"
+	"github.com/df-mc/dragonfly/server/cmd"
 )
 
 type Status struct{}

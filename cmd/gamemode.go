@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/blackjack200/gracticerssential/convert"
-	"github.com/blackjack200/gracticerssential/permission"
+	"github.com/Blackjack200/GracticeEssential/convert"
+	"github.com/Blackjack200/GracticeEssential/permission"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
 )
