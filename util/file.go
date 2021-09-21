@@ -1,7 +1,6 @@
 package util
 
 import (
-	"io"
 	"io/ioutil"
 	"os"
 
@@ -27,13 +26,7 @@ func DeleteFile(path string) {
 }
 
 func WriteFile(path string, data []byte) {
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		logrus.WithError(err).WithField("util", "WriteFile").Errorf("unable to open '%s'", path)
-		return
-	}
-	_, err = io.WriteString(f, string(data))
-	if err != nil {
+	if err := os.WriteFile(path, data, 0666); err != nil {
 		logrus.WithError(err).WithField("util", "WriteFile").Errorf("unable to write '%s'", path)
 		return
 	}

@@ -15,14 +15,12 @@ import (
 )
 
 var _global *server.Server
-var _log *logrus.Logger
 
 func Global() *server.Server {
 	return _global
 }
 
 func Setup(l *logrus.Logger) error {
-	_log = l
 	if cfg, err := readConfig(); err != nil {
 		return err
 	} else {

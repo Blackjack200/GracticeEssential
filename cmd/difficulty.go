@@ -7,19 +7,18 @@ import (
 	"github.com/df-mc/dragonfly/server/cmd"
 )
 
-type DefaultGameMode struct {
-	GameMode string
+type Difficulty struct {
+	Diff string
 }
 
-func (d DefaultGameMode) Run(src cmd.Source, o *cmd.Output) {
+func (d *Difficulty) Run(src cmd.Source, o *cmd.Output) {
 	if permission.OpEntry().Has(src.Name()) {
-		mode, err := convert.ParseGameMode(d.GameMode)
-		if err != nil {
+		if di, err := convert.ParseDifficulty(d.Diff); err != nil {
 			o.Error(err)
-			return
+		} else {
+			server.Global().World().SetDifficulty(di)
+			o.Printf("Set game difficulty to %v", convert.MustString(convert.DumpDifficulty(di)))
 		}
-		server.Global().World().SetDefaultGameMode(mode)
-		o.Printf("Set default game mode to %v", convert.MustString(convert.DumpGameMode(mode)))
 	} else {
 		o.Error("You are not operator")
 	}

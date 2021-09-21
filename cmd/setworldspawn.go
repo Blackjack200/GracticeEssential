@@ -11,7 +11,7 @@ import (
 type SetWorldSpawn struct{}
 
 func (SetWorldSpawn) Run(src cmd.Source, o *cmd.Output) {
-	if permission.IsOperator(src.Name()) {
+	if permission.OpEntry().Has(src.Name()) {
 		if p, ok := src.(*player.Player); ok {
 			s := cube.PosFromVec3(p.Position())
 			server.Global().World().SetSpawn(s)

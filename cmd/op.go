@@ -12,7 +12,7 @@ type Op struct {
 
 func (b Op) Run(src cmd.Source, o *cmd.Output) {
 	defer o.Messages()
-	if permission.IsOperator(src.Name()) {
+	if permission.OpEntry().Has(src.Name()) {
 		if b.Target == "" {
 			o.Error("Command argument error")
 			return
@@ -22,7 +22,7 @@ func (b Op) Run(src cmd.Source, o *cmd.Output) {
 			op.Print("You have been opped")
 			t.SendCommandOutput(op)
 		}
-		permission.SetOperator(b.Target)
+		permission.OpEntry().Add(b.Target)
 		o.Printf("Opped: %v", b.Target)
 	} else {
 		o.Error("You are not operator")
@@ -34,12 +34,12 @@ type DeOp struct {
 }
 
 func (b DeOp) Run(src cmd.Source, o *cmd.Output) {
-	if permission.IsOperator(src.Name()) {
+	if permission.OpEntry().Has(src.Name()) {
 		if b.Target == "" {
 			o.Error("Command argument error")
 			return
 		}
-		permission.RemoveOperator(b.Target)
+		permission.OpEntry().Delete(b.Target)
 		o.Printf("De-opped: %v", b.Target)
 	} else {
 		o.Error("You are not operator")

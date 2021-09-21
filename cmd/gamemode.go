@@ -12,16 +12,15 @@ type GameMode struct {
 }
 
 func (g GameMode) Run(src cmd.Source, o *cmd.Output) {
-	if permission.IsOperator(src.Name()) {
+	if permission.OpEntry().Has(src.Name()) {
 		if p, ok := src.(*player.Player); ok {
 			mode, err := convert.ParseGameMode(g.GameMode)
 			if err != nil {
 				o.Error(err)
 				return
 			}
-			str, _ := convert.DumpGameMode(mode)
 			p.SetGameMode(mode)
-			o.Printf("Set game mode to %v", str)
+			o.Printf("Set game mode to %v", convert.MustString(convert.DumpGameMode(mode)))
 		} else {
 			o.Error("This command must use in game")
 		}

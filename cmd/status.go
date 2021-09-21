@@ -11,7 +11,7 @@ import (
 type Status struct{}
 
 func (Status) Run(src cmd.Source, o *cmd.Output) {
-	if permission.IsOperator(src.Name()) {
+	if permission.OpEntry().Has(src.Name()) {
 		stat := getMemStats()
 		o.Printf("Uptime: %v", server.Global().Uptime().String())
 		o.Printf("Goroutine Count: %v", runtime.NumGoroutine())

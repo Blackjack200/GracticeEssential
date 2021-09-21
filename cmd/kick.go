@@ -14,7 +14,7 @@ type Kick struct {
 }
 
 func (b Kick) Run(src cmd.Source, o *cmd.Output) {
-	if permission.IsOperator(src.Name()) {
+	if permission.OpEntry().Has(src.Name()) {
 		if b.Target == nil {
 			o.Error("Target not found")
 			return

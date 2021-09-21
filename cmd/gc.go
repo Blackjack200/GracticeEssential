@@ -10,7 +10,7 @@ import (
 type GC struct{}
 
 func (GC) Run(src cmd.Source, o *cmd.Output) {
-	if permission.IsOperator(src.Name()) {
+	if permission.OpEntry().Has(src.Name()) {
 		a, b := gc()
 		o.Printf("Allocated Memory freed: %v MB", (b.Sys-a.Sys)/1024/1024)
 	} else {

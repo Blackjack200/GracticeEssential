@@ -25,7 +25,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 	server.Loop(func(p *player.Player) {
-		if permission.IsBanned(p.Name()) {
+		if permission.BanEntry().Has(p.Name()) {
 			p.Disconnect("You are banned")
 		}
 	}, func() {
