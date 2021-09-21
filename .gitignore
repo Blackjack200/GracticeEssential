@@ -14,3 +14,10 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 .idea
+
+banned-players.txt
+ops.txt
+config.toml
+players
+world
+data

@@ -11,6 +11,9 @@ var _opFile = filepath.Join(util.WorkingPath, "ops.txt")
 var _opList = loadOperators()
 
 func IsOperator(n string) bool {
+	if n == "CONSOLE" {
+		return true
+	}
 	for _, l := range _opList {
 		if l == n {
 			return true

@@ -12,18 +12,17 @@ type GC struct{}
 func (GC) Run(src cmd.Source, o *cmd.Output) {
 	if permission.IsOperator(src.Name()) {
 		a, b := gc()
-		o.Printf("Allocated Memory freed: %d MB", (b.Sys-a.Sys)/1024/1024)
-		o.Printf("Virtual Memory freed: %d MB", (b.HeapSys-a.HeapSys)/1024/1024)
+		o.Printf("Allocated Memory freed: %v MB", (b.Sys-a.Sys)/1024/1024)
 	} else {
 		o.Error("You are not operator")
 	}
 }
 
-func gc() (after runtime.MemStats, before runtime.MemStats) {
+func gc() (runtime.MemStats, runtime.MemStats) {
 	var m runtime.MemStats
 	var m2 runtime.MemStats
 	runtime.ReadMemStats(&m)
 	runtime.GC()
 	runtime.ReadMemStats(&m2)
-	return before, m2
+	return m, m2
 }

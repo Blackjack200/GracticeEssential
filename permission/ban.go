@@ -13,6 +13,9 @@ var _banFile = filepath.Join(util.WorkingPath, "banned-players.txt")
 var _banList = loadBanList()
 
 func IsBanned(n string) bool {
+	if n == "CONSOLE" {
+		return true
+	}
 	for _, l := range _banList {
 		if l == n {
 			return true
