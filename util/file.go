@@ -3,32 +3,28 @@ package util
 import (
 	"io/ioutil"
 	"os"
-
-	"github.com/sirupsen/logrus"
 )
 
 var WorkingPath, _ = os.Getwd()
 
-func ReadFile(path string) []byte {
+func MustReadFile(path string) []byte {
 	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
-		logrus.WithError(err).WithField("util", "ReadFile").Errorf("unable to read '%s'", path)
-		return nil
+		panic(err)
 	}
 	return bytes
 }
 
-func DeleteFile(path string) {
+func MustDeleteFile(path string) {
 	err := os.Remove(path)
 	if err != nil {
-		logrus.WithError(err).WithField("util", "DeleteFile").Errorf("unable to delete '%s'", path)
+		panic(err)
 	}
 }
 
-func WriteFile(path string, data []byte) {
+func MustWriteFile(path string, data []byte) {
 	if err := os.WriteFile(path, data, 0666); err != nil {
-		logrus.WithError(err).WithField("util", "WriteFile").Errorf("unable to write '%s'", path)
-		return
+		panic(err)
 	}
 }
 
@@ -41,4 +37,10 @@ func FileExist(path string) bool {
 		return false
 	}
 	return true
+}
+
+func Must(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

@@ -15,17 +15,17 @@ type Entry struct {
 }
 
 func (e *Entry) write() {
-	util.WriteFile(e.path, []byte(strings.Join(e.list, "\n")))
+	util.MustWriteFile(e.path, []byte(strings.Join(e.list, "\n")))
 }
 
 func (e *Entry) Reload() {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	if !util.FileExist(e.path) {
-		util.WriteFile(e.path, nil)
+		util.MustWriteFile(e.path, nil)
 	}
 	var s []string
-	for _, a := range strings.Split(string(util.ReadFile(e.path)), "\n") {
+	for _, a := range strings.Split(string(util.MustReadFile(e.path)), "\n") {
 		if len(strings.TrimSpace(a)) != 0 {
 			s = append(s, a)
 		}
