@@ -5,7 +5,9 @@ import (
 	"github.com/Blackjack200/GracticeEssential/console"
 	"github.com/Blackjack200/GracticeEssential/permission"
 	"github.com/Blackjack200/GracticeEssential/server"
+	"github.com/Blackjack200/GracticeEssential/util"
 	"github.com/df-mc/dragonfly/server/player"
+	"github.com/df-mc/dragonfly/server/player/chat"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,6 +17,8 @@ func main() {
 	if err := server.Setup(log); err != nil {
 		logrus.Fatal(err)
 	}
+
+	chat.Global.Subscribe(&util.LoggerSubscriber{Logger: log})
 	cmd.Setup()
 	c := console.Setup(log)
 	c.Run()

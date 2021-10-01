@@ -21,7 +21,7 @@ func Setup() {
 	cmd.Register(cmd.New("unban", "Removes player from banlist.", nil, Unban{}))
 	cmd.Register(cmd.New("kick", "Kicks a player from the server.", nil, Kick{}))
 
-	cmd.Register(cmd.New("difficulty", "Sets the game difficulty", nil, &Difficulty{}))
+	cmd.Register(cmd.New("difficulty", "Sets the game difficulty", nil, Difficulty{}))
 	cmd.Register(cmd.New("defaultgamemode", "Sets the default game mode.", nil, DefaultGameMode{}))
 	cmd.Register(cmd.New("gamemode", "Sets your game mode.", []string{"gm"}, GameMode{}))
 

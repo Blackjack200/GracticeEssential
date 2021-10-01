@@ -11,7 +11,7 @@ type Difficulty struct {
 	Diff string
 }
 
-func (d *Difficulty) Run(src cmd.Source, o *cmd.Output) {
+func (d Difficulty) Run(src cmd.Source, o *cmd.Output) {
 	if permission.OpEntry().Has(src.Name()) {
 		if di, err := convert.ParseDifficulty(d.Diff); err != nil {
 			o.Error(err)
