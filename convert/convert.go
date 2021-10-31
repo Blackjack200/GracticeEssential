@@ -10,19 +10,19 @@ import (
 func ParseGameMode(v string) (world.GameMode, error) {
 	switch strings.ToLower(v) {
 	case "0", "s", "survival":
-		return world.GameModeSurvival{}, nil
+		return world.GameModeSurvival, nil
 	case "1", "c", "creative":
-		return world.GameModeCreative{}, nil
+		return world.GameModeCreative, nil
 	case "2", "a", "adventure":
-		return world.GameModeAdventure{}, nil
+		return world.GameModeAdventure, nil
 	case "3", "spectator":
-		return world.GameModeSpectator{}, nil
+		return world.GameModeSpectator, nil
 	}
 	return nil, fmt.Errorf("unknown gamemode %v", v)
 }
 
 func DumpGameMode(g world.GameMode) (string, error) {
-	switch g.(type) {
+	switch g {
 	case world.GameModeSurvival:
 		return "survival", nil
 	case world.GameModeCreative:
