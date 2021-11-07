@@ -3,12 +3,12 @@ module github.com/Blackjack200/GracticeEssential
 go 1.17
 
 require (
-	github.com/df-mc/dragonfly v0.4.0
 	github.com/go-gl/mathgl v1.0.0
 	github.com/pelletier/go-toml v1.9.4
 	github.com/sandertv/gophertunnel v1.16.1
 	github.com/sirupsen/logrus v1.8.1
 	go.uber.org/atomic v1.9.0
+	github.com/df-mc/dragonfly v0.4.1-0.20211106152207-c18257e3f1bb
 )
 
 require (
