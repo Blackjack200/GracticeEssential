@@ -39,19 +39,19 @@ func DumpGameMode(g world.GameMode) (string, error) {
 func ParseDifficulty(v string) (world.Difficulty, error) {
 	switch strings.ToLower(v) {
 	case "0", "p", "peaceful":
-		return world.DifficultyPeaceful{}, nil
+		return world.DifficultyPeaceful, nil
 	case "1", "e", "easy":
-		return world.DifficultyEasy{}, nil
+		return world.DifficultyEasy, nil
 	case "2", "n", "normal":
-		return world.DifficultyNormal{}, nil
+		return world.DifficultyNormal, nil
 	case "3", "h", "hard":
-		return world.DifficultyHard{}, nil
+		return world.DifficultyHard, nil
 	}
 	return nil, fmt.Errorf("unknown difficulty %v", v)
 }
 
 func DumpDifficulty(d world.Difficulty) (string, error) {
-	switch d.(type) {
+	switch d {
 	case world.DifficultyPeaceful:
 		return "peaceful", nil
 	case world.DifficultyEasy:
