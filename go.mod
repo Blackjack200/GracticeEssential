@@ -3,7 +3,7 @@ module github.com/Blackjack200/GracticeEssential
 go 1.17
 
 require (
-	github.com/df-mc/dragonfly v0.5.2-0.20220103112834-dfe42125ea29
+	github.com/df-mc/dragonfly v0.5.2-0.20220103133413-36531f5a72f1
 	github.com/go-gl/mathgl v1.0.0
 	github.com/pelletier/go-toml v1.9.4
 	github.com/sandertv/gophertunnel v1.18.1
