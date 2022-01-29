@@ -21,6 +21,9 @@ func Global() *server.Server {
 }
 
 func Setup(l *logrus.Logger) error {
+	util.PanicFunc(func(v interface{}) {
+		l.Panic(v)
+	})
 	if cfg, err := readConfig(); err != nil {
 		return err
 	} else {

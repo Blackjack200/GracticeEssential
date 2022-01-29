@@ -21,3 +21,4 @@ config.toml
 players
 world
 data
+.DS_Store
