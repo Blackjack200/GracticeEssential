@@ -22,17 +22,23 @@ func Must(args ...interface{}) {
 }
 
 func selectVal(rule func(interface{}) bool, args ...interface{}) interface{} {
+	var val interface{}
+	found := false
 	for _, arg := range args {
 		if arg == nil {
 			continue
 		}
 		if rule(arg) {
-			return arg
+			val = arg
+			found = true
+			continue
 		}
 		Must(arg)
 	}
-	panicFunc(fmt.Errorf("no value selected"))
-	panic("unreachable")
+	if !found {
+		panic(fmt.Errorf("no value found"))
+	}
+	return val
 }
 
 func SelectNotNil(args ...interface{}) interface{} {

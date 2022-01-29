@@ -8,24 +8,15 @@ import (
 var WorkingPath, _ = os.Getwd()
 
 func MustReadFile(path string) []byte {
-	bytes, err := ioutil.ReadFile(path)
-	if err != nil {
-		panic(err)
-	}
-	return bytes
+	return SelectAnyByteSlice(ioutil.ReadFile(path))
 }
 
 func MustDeleteFile(path string) {
-	err := os.Remove(path)
-	if err != nil {
-		panic(err)
-	}
+	Must(os.Remove(path))
 }
 
 func MustWriteFile(path string, data []byte) {
-	if err := os.WriteFile(path, data, 0666); err != nil {
-		panic(err)
-	}
+	Must(os.WriteFile(path, data, 0666))
 }
 
 func FileExist(path string) bool {
