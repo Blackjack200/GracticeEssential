@@ -8,29 +8,17 @@ import (
 )
 
 type serverAllower struct {
-	parent  server.Allower
-	current server.Allower
+	a server.Allower
+	b server.Allower
 }
 
 func (s *serverAllower) Allow(addr net.Addr, i login.IdentityData, c login.ClientData) (string, bool) {
-	curt := s.current
-	if str, ok := curt.Allow(addr, i, c); !ok {
-		return str, ok
+	if m, b := s.a.Allow(addr, i, c); !b {
+		return m, b
 	}
-	curt = s.parent
-	for curt != nil {
-		if str, ok := curt.Allow(addr, i, c); !ok {
-			return str, ok
-		}
-		if n, ok := curt.(*serverAllower); ok {
-			curt = n
-		} else {
-			break
-		}
-	}
-	return "", true
+	return s.b.Allow(addr, i, c)
 }
 
-func ServerAllower(parent, current server.Allower) server.Allower {
-	return &serverAllower{parent: parent, current: current}
+func LinkServerAllower(a, b server.Allower) server.Allower {
+	return &serverAllower{a: a, b: b}
 }

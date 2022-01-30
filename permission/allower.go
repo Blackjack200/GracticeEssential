@@ -7,10 +7,10 @@ import (
 	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 )
 
-func (e *Entry) ServerAllower(msg string, detectHas bool) server.Allower {
+func (e *Entry) ServerAllower(msg string, allowHas bool) server.Allower {
 	return entryServerAllower{
 		e:         e,
-		detectHas: detectHas,
+		detectHas: allowHas,
 		msg:       msg,
 	}
 }
