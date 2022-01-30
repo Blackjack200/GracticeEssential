@@ -1,10 +1,10 @@
 package permission
 
 import (
-	"github.com/df-mc/dragonfly/server"
-	"github.com/df-mc/dragonfly/server/cmd"
-	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 	"net"
+
+	"github.com/df-mc/dragonfly/server"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 )
 
 func (e *Entry) ServerAllower(msg string, detectHas bool) server.Allower {
@@ -12,13 +12,6 @@ func (e *Entry) ServerAllower(msg string, detectHas bool) server.Allower {
 		e:         e,
 		detectHas: detectHas,
 		msg:       msg,
-	}
-}
-
-func (e *Entry) CmdAllower(detectHas bool) cmd.Allower {
-	return entryCmdAllower{
-		e:         e,
-		detectHas: detectHas,
 	}
 }
 
@@ -33,16 +26,4 @@ func (e entryServerAllower) Allow(_ net.Addr, d login.IdentityData, _ login.Clie
 		return e.msg, e.e.Has(d.DisplayName)
 	}
 	return e.msg, !e.e.Has(d.DisplayName)
-}
-
-type entryCmdAllower struct {
-	e         *Entry
-	detectHas bool
-}
-
-func (e entryCmdAllower) Allow(s cmd.Source) bool {
-	if e.detectHas {
-		return e.e.Has(s.Name())
-	}
-	return !e.e.Has(s.Name())
 }
