@@ -9,14 +9,14 @@ import (
 type Stop struct{}
 
 func (Stop) Run(src cmd.Source, o *cmd.Output) {
-	if permission.OpEntry().Has(src.Name()) {
-		out := &cmd.Output{}
-		out.Print("Stopping the server")
-		for _, p := range server.Global().Players() {
-			p.SendCommandOutput(out)
-		}
-		_ = server.Global().Close()
-	} else {
-		o.Error("You are not operator")
+	out := &cmd.Output{}
+	out.Print("Stopping the server")
+	for _, p := range server.Global().Players() {
+		p.SendCommandOutput(out)
 	}
+	_ = server.Global().Close()
+}
+
+func (Stop) Allow(s cmd.Source) bool {
+	return permission.OpEntry().Has(s.Name())
 }

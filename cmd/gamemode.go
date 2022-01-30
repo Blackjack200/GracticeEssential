@@ -28,3 +28,7 @@ func (g GameMode) Run(src cmd.Source, o *cmd.Output) {
 		o.Error("You are not operator")
 	}
 }
+
+func (g GameMode) Allow(s cmd.Source) bool {
+	return permission.OpEntry().Has(s.Name())
+}

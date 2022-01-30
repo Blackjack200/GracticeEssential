@@ -12,14 +12,14 @@ type Difficulty struct {
 }
 
 func (d Difficulty) Run(src cmd.Source, o *cmd.Output) {
-	if permission.OpEntry().Has(src.Name()) {
-		if di, err := convert.ParseDifficulty(d.Diff); err != nil {
-			o.Error(err)
-		} else {
-			server.Global().World().SetDifficulty(di)
-			o.Printf("Set game difficulty to %v", convert.MustString(convert.DumpDifficulty(di)))
-		}
+	if di, err := convert.ParseDifficulty(d.Diff); err != nil {
+		o.Error(err)
 	} else {
-		o.Error("You are not operator")
+		server.Global().World().SetDifficulty(di)
+		o.Printf("Set game difficulty to %v", convert.MustString(convert.DumpDifficulty(di)))
 	}
+}
+
+func (d Difficulty) Allow(s cmd.Source) bool {
+	return permission.OpEntry().Has(s.Name())
 }

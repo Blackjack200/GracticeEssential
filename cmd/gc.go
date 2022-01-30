@@ -18,6 +18,10 @@ func (GC) Run(src cmd.Source, o *cmd.Output) {
 	}
 }
 
+func (GC) Allow(s cmd.Source) bool {
+	return permission.OpEntry().Has(s.Name())
+}
+
 func gc() (runtime.MemStats, runtime.MemStats) {
 	var m runtime.MemStats
 	var m2 runtime.MemStats
