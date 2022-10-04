@@ -65,7 +65,9 @@ func readConfig() (server.UserConfig, error) {
 
 func Loop(h func(p *player.Player), end func()) {
 	for Global().Accept(h) {
-		end()
+		if end != nil {
+			end()
+		}
 	}
 }
 

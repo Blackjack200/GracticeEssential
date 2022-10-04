@@ -28,7 +28,7 @@ func signalHandler(log *logrus.Logger, callback func()) {
 	}(callback)
 }
 
-func Bootstrap(log *logrus.Logger, cfgFunc func(config *df.Config), end func(), s chat.Subscriber) (startFunc func()) {
+func Bootstrap(log *logrus.Logger, cfgFunc func(config *df.Config), playerFunc func(*player.Player), end func(), s chat.Subscriber) (startFunc func()) {
 	if err := server.SetupFunc(log, cfgFunc); err != nil {
 		logrus.Fatal(err)
 	}
@@ -41,8 +41,7 @@ func Bootstrap(log *logrus.Logger, cfgFunc func(config *df.Config), end func(), 
 	})
 	startFunc = func() {
 		server.Start()
-		server.Loop(func(p *player.Player) {
-		}, end)
+		server.Loop(playerFunc, end)
 	}
 	return startFunc
 }
@@ -53,6 +52,6 @@ func NewLogger() *logrus.Logger {
 	return log
 }
 
-func Default(log *logrus.Logger, cfgFunc func(config *df.Config), end func()) (startFunc func()) {
-	return Bootstrap(log, cfgFunc, end, &util.LoggerSubscriber{Logger: log})
+func Default(log *logrus.Logger, cfgFunc func(config *df.Config), playerFunc func(*player.Player), end func()) (startFunc func()) {
+	return Bootstrap(log, cfgFunc, playerFunc, end, &util.LoggerSubscriber{Logger: log})
 }
