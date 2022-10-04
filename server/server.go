@@ -2,49 +2,58 @@ package server
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
-	"os/signal"
-	"syscall"
-
+	"github.com/Blackjack200/GracticeEssential/permission"
 	"github.com/Blackjack200/GracticeEssential/util"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/pelletier/go-toml"
 	"github.com/sirupsen/logrus"
+	"os"
+	"time"
 )
 
 var _global *server.Server
+var _startDate time.Time
 
 func Global() *server.Server {
 	return _global
 }
 
-func Setup(l *logrus.Logger) error {
+func SetupFunc(l *logrus.Logger, cfgFunc func(*server.Config)) error {
 	util.PanicFunc(func(v interface{}) {
 		l.Panic(v)
 	})
 	if cfg, err := readConfig(); err != nil {
 		return err
 	} else {
-		_global = server.New(&cfg, l)
+		cfg := util.SelectNotNil[server.Config](cfg.Config(l))
+		cfg.Allower = permission.BanEntry().ServerAllower("You are banned", false)
+		if cfgFunc != nil {
+			cfgFunc(&cfg)
+		}
+		_global = cfg.New()
 	}
 	return nil
 }
 
-func readConfig() (server.Config, error) {
+func Start() {
+	Global().Listen()
+	_startDate = time.Now()
+}
+
+func readConfig() (server.UserConfig, error) {
 	c := server.DefaultConfig()
 	if !util.FileExist("config.toml") {
 		data, err := toml.Marshal(c)
 		if err != nil {
 			return c, fmt.Errorf("failed encoding default config: %v", err)
 		}
-		if err := ioutil.WriteFile("config.toml", data, 0644); err != nil {
+		if err := os.WriteFile("config.toml", data, 0644); err != nil {
 			return c, fmt.Errorf("failed creating config: %v", err)
 		}
 		return c, nil
 	}
-	data, err := ioutil.ReadFile("config.toml")
+	data, err := os.ReadFile("config.toml")
 	if err != nil {
 		return c, fmt.Errorf("error reading config: %v", err)
 	}
@@ -55,24 +64,11 @@ func readConfig() (server.Config, error) {
 }
 
 func Loop(h func(p *player.Player), end func()) {
-	for {
-		if p, err := Global().Accept(); err != nil {
-			break
-		} else {
-			h(p)
-		}
+	for Global().Accept(h) {
 		end()
 	}
 }
 
-func CloseOnProgramEnd(log *logrus.Logger, f func()) {
-	c := make(chan os.Signal, 2)
-	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-	go func(fn func()) {
-		<-c
-		if err := Global().Close(); err != nil {
-			log.Errorf("error shutting down server: %v", err)
-		}
-		fn()
-	}(f)
+func Uptime() time.Duration {
+	return time.Now().Sub(_startDate)
 }

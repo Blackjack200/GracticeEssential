@@ -21,15 +21,15 @@ func Must(args ...interface{}) {
 	}
 }
 
-func selectVal(rule func(interface{}) bool, args ...interface{}) interface{} {
-	var val interface{}
+func selectVal[T any](rule func(T) bool, args ...interface{}) T {
+	var val T
 	found := false
 	for _, arg := range args {
 		if arg == nil {
 			continue
 		}
-		if rule(arg) {
-			val = arg
+		if _, ok := arg.(T); ok && rule(arg.(T)) {
+			val = arg.(T)
 			found = true
 			continue
 		}
@@ -41,62 +41,47 @@ func selectVal(rule func(interface{}) bool, args ...interface{}) interface{} {
 	return val
 }
 
-func SelectNotNil(args ...interface{}) interface{} {
-	return selectVal(func(arg interface{}) bool {
+func SelectNotNil[T any](args ...interface{}) T {
+	return selectVal[T](func(arg T) bool {
 		return true
 	}, args...)
 }
 
 func SelectError(args ...interface{}) error {
-	return selectVal(func(arg interface{}) bool {
+	return selectVal[error](func(arg error) bool {
 		if _, ok := arg.(error); ok {
 			return true
 		}
 		return false
-	}, args...).(error)
+	}, args...)
 }
 
 func SelectString(args ...interface{}) string {
-	return selectVal(func(arg interface{}) bool {
-		if str, ok := arg.(string); ok {
-			return len(str) > 0
-		}
-		return false
-	}, args...).(string)
+	return selectVal[string](func(str string) bool {
+		return len(str) > 0
+	}, args...)
 }
 
 func SelectAnyString(args ...interface{}) string {
-	return selectVal(func(arg interface{}) bool {
-		if _, ok := arg.(string); ok {
-			return true
-		}
-		return false
-	}, args...).(string)
+	return selectVal[string](func(str string) bool {
+		return true
+	}, args...)
 }
 
 func SelectBool(args ...interface{}) bool {
-	return selectVal(func(arg interface{}) bool {
-		if v, ok := arg.(bool); ok {
-			return v
-		}
-		return false
-	}, args...).(bool)
+	return selectVal[bool](func(arg bool) bool {
+		return arg
+	}, args...)
 }
 
 func SelectByteSlice(args ...interface{}) []byte {
-	return selectVal(func(arg interface{}) bool {
-		if v, ok := arg.([]byte); ok {
-			return len(v) > 0
-		}
-		return false
-	}, args...).([]byte)
+	return selectVal[[]byte](func(arg []byte) bool {
+		return len(arg) > 0
+	}, args...)
 }
 
 func SelectAnyByteSlice(args ...interface{}) []byte {
-	return selectVal(func(arg interface{}) bool {
-		if _, ok := arg.([]byte); ok {
-			return true
-		}
-		return false
-	}, args...).([]byte)
+	return selectVal[[]byte](func(arg []byte) bool {
+		return true
+	}, args...)
 }

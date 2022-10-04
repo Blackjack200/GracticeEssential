@@ -1,18 +1,17 @@
 package util
 
 import (
-	"io/ioutil"
 	"os"
 )
 
 var WorkingPath, _ = os.Getwd()
 
 func MustReadFile(path string) []byte {
-	return SelectAnyByteSlice(ioutil.ReadFile(path))
+	return SelectAnyByteSlice(os.ReadFile(path))
 }
 
 func MustDeleteFile(path string) {
-	Must(os.Remove(path))
+	Must(os.RemoveAll(path))
 }
 
 func MustWriteFile(path string, data []byte) {

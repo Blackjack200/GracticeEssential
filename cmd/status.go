@@ -12,7 +12,7 @@ type Status struct{}
 
 func (Status) Run(src cmd.Source, o *cmd.Output) {
 	stat := getMemStats()
-	o.Printf("Uptime: %v", server.Global().Uptime().String())
+	o.Printf("Uptime: %v", server.Uptime().String())
 	o.Printf("Goroutine Count: %v", runtime.NumGoroutine())
 	o.Printf("Allocated Memory: %dMB", stat.Sys/1024/1024)
 	o.Printf("Virtual Memory: %dMB", stat.HeapSys/1024/1024)
