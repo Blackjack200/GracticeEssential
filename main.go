@@ -4,5 +4,5 @@ import "github.com/Blackjack200/GracticeEssential/bootstrap"
 
 func main() {
 	log := bootstrap.NewLogger()
-	bootstrap.Default(log, nil, nil)()
+	bootstrap.Default(log, nil, nil, nil)()
 }

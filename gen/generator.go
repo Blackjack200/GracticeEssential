@@ -11,7 +11,7 @@ type Void struct {
 	Spawn cube.Pos
 }
 
-func New(spawn cube.Pos) *Void {
+func NewVoid(spawn cube.Pos) *Void {
 	return &Void{Spawn: spawn}
 }
 
