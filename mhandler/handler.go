@@ -1,20 +1,27 @@
-package handler
+package mhandler
 
 import (
-	"github.com/df-mc/dragonfly/server/player"
+	"fmt"
+	"reflect"
 	"sync"
 )
 
 type MultipleHandler struct {
 	mu *sync.Mutex
-	//handler -> nil
+	//mhandler -> nil
 	handlers map[any]any
 }
 
-func (h *MultipleHandler) Register(hdr interface{}) {
+func (h *MultipleHandler) Register(hdr interface{}) (unregister func()) {
+	r := reflect.ValueOf(hdr)
+	if r.NumMethod() < 1 {
+		panic(fmt.Errorf("invalid mhandler: %v", hdr))
+	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	h.handlers[hdr] = nil
+	unregister = func() { h.Unregister(hdr) }
+	return
 }
 
 func (h *MultipleHandler) Unregister(hdr interface{}) {
@@ -23,15 +30,9 @@ func (h *MultipleHandler) Unregister(hdr interface{}) {
 	delete(h.handlers, hdr)
 }
 
-func newHandler() *MultipleHandler {
+func New() *MultipleHandler {
 	return &MultipleHandler{
 		mu:       &sync.Mutex{},
 		handlers: make(map[any]any),
 	}
-}
-
-func Handle(p *player.Player) *MultipleHandler {
-	hdr := newHandler()
-	p.Handle(hdr)
-	return hdr
 }
