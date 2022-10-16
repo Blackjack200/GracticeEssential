@@ -24,6 +24,12 @@ func (h *MultipleHandler) Register(hdr interface{}) (unregister func()) {
 	return
 }
 
+func (h *MultipleHandler) Clear() {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.handlers = nil
+}
+
 func (h *MultipleHandler) Unregister(hdr interface{}) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
