@@ -35,6 +35,7 @@ func main() {
 	log := bootstrap.NewLogger()
 	bootstrap.Default(log, nil, func(p *player.Player) {
 		h := mhandler.New()
+		p.Handle(h)
 		unreg := h.Register(myBlockBreakHandler{})
 		h.Register(myChatHandler{unreg: unreg})
 		h.Register(myQuitHandler{})

@@ -68,7 +68,7 @@ func genFromInterface(ifaceType *ast.InterfaceType, reflectionIface reflect.Type
 				Params(typedIn...).
 				Block(
 					jen.For(
-						jen.List(jen.Id("hdr"), jen.Id("_")).Op(":=").Range().Id("h.handlers"),
+						jen.List(jen.Id("_"), jen.Id("hdr")).Op(":=").Range().Id("h.handlers"),
 					).Block(
 						jen.If(
 							jen.List(jen.Id("hdr"), jen.Id("ok")).Op(":=").Op("hdr").Assert(jen.Id(newInterfaceName)),

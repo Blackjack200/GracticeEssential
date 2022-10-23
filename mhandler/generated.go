@@ -192,217 +192,217 @@ type QuitHandler interface {
 }
 
 func (h *MultipleHandler) HandleMove(ctx *event.Context, newPos mgl64.Vec3, newYaw, newPitch float64) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(MoveHandler); ok {
 			hdr.HandleMove(ctx, newPos, newYaw, newPitch)
 		}
 	}
 }
 func (h *MultipleHandler) HandleJump() {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(JumpHandler); ok {
 			hdr.HandleJump()
 		}
 	}
 }
 func (h *MultipleHandler) HandleTeleport(ctx *event.Context, pos mgl64.Vec3) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(TeleportHandler); ok {
 			hdr.HandleTeleport(ctx, pos)
 		}
 	}
 }
 func (h *MultipleHandler) HandleChangeWorld(before, after *world.World) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ChangeWorldHandler); ok {
 			hdr.HandleChangeWorld(before, after)
 		}
 	}
 }
 func (h *MultipleHandler) HandleToggleSprint(ctx *event.Context, after bool) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ToggleSprintHandler); ok {
 			hdr.HandleToggleSprint(ctx, after)
 		}
 	}
 }
 func (h *MultipleHandler) HandleToggleSneak(ctx *event.Context, after bool) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ToggleSneakHandler); ok {
 			hdr.HandleToggleSneak(ctx, after)
 		}
 	}
 }
 func (h *MultipleHandler) HandleChat(ctx *event.Context, message *string) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ChatHandler); ok {
 			hdr.HandleChat(ctx, message)
 		}
 	}
 }
 func (h *MultipleHandler) HandleFoodLoss(ctx *event.Context, from, to int) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(FoodLossHandler); ok {
 			hdr.HandleFoodLoss(ctx, from, to)
 		}
 	}
 }
 func (h *MultipleHandler) HandleHeal(ctx *event.Context, health *float64, src healing.Source) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(HealHandler); ok {
 			hdr.HandleHeal(ctx, health, src)
 		}
 	}
 }
 func (h *MultipleHandler) HandleHurt(ctx *event.Context, damage *float64, attackImmunity *time.Duration, src damage.Source) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(HurtHandler); ok {
 			hdr.HandleHurt(ctx, damage, attackImmunity, src)
 		}
 	}
 }
 func (h *MultipleHandler) HandleDeath(src damage.Source) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(DeathHandler); ok {
 			hdr.HandleDeath(src)
 		}
 	}
 }
 func (h *MultipleHandler) HandleRespawn(pos *mgl64.Vec3, w **world.World) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(RespawnHandler); ok {
 			hdr.HandleRespawn(pos, w)
 		}
 	}
 }
 func (h *MultipleHandler) HandleSkinChange(ctx *event.Context, skin *skin.Skin) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(SkinChangeHandler); ok {
 			hdr.HandleSkinChange(ctx, skin)
 		}
 	}
 }
 func (h *MultipleHandler) HandleStartBreak(ctx *event.Context, pos cube.Pos) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(StartBreakHandler); ok {
 			hdr.HandleStartBreak(ctx, pos)
 		}
 	}
 }
 func (h *MultipleHandler) HandleBlockBreak(ctx *event.Context, pos cube.Pos, drops *[]item.Stack) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(BlockBreakHandler); ok {
 			hdr.HandleBlockBreak(ctx, pos, drops)
 		}
 	}
 }
 func (h *MultipleHandler) HandleBlockPlace(ctx *event.Context, pos cube.Pos, b world.Block) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(BlockPlaceHandler); ok {
 			hdr.HandleBlockPlace(ctx, pos, b)
 		}
 	}
 }
 func (h *MultipleHandler) HandleBlockPick(ctx *event.Context, pos cube.Pos, b world.Block) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(BlockPickHandler); ok {
 			hdr.HandleBlockPick(ctx, pos, b)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemUse(ctx *event.Context) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ItemUseHandler); ok {
 			hdr.HandleItemUse(ctx)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemUseOnBlock(ctx *event.Context, pos cube.Pos, face cube.Face, clickPos mgl64.Vec3) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ItemUseOnBlockHandler); ok {
 			hdr.HandleItemUseOnBlock(ctx, pos, face, clickPos)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemUseOnEntity(ctx *event.Context, e world.Entity) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ItemUseOnEntityHandler); ok {
 			hdr.HandleItemUseOnEntity(ctx, e)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemConsume(ctx *event.Context, item item.Stack) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ItemConsumeHandler); ok {
 			hdr.HandleItemConsume(ctx, item)
 		}
 	}
 }
 func (h *MultipleHandler) HandleAttackEntity(ctx *event.Context, e world.Entity, force, height *float64, critical *bool) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(AttackEntityHandler); ok {
 			hdr.HandleAttackEntity(ctx, e, force, height, critical)
 		}
 	}
 }
 func (h *MultipleHandler) HandleExperienceGain(ctx *event.Context, amount *int) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ExperienceGainHandler); ok {
 			hdr.HandleExperienceGain(ctx, amount)
 		}
 	}
 }
 func (h *MultipleHandler) HandlePunchAir(ctx *event.Context) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(PunchAirHandler); ok {
 			hdr.HandlePunchAir(ctx)
 		}
 	}
 }
 func (h *MultipleHandler) HandleSignEdit(ctx *event.Context, oldText, newText string) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(SignEditHandler); ok {
 			hdr.HandleSignEdit(ctx, oldText, newText)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemDamage(ctx *event.Context, i item.Stack, damage int) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ItemDamageHandler); ok {
 			hdr.HandleItemDamage(ctx, i, damage)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemPickup(ctx *event.Context, i item.Stack) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ItemPickupHandler); ok {
 			hdr.HandleItemPickup(ctx, i)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemDrop(ctx *event.Context, e *entity.Item) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(ItemDropHandler); ok {
 			hdr.HandleItemDrop(ctx, e)
 		}
 	}
 }
 func (h *MultipleHandler) HandleTransfer(ctx *event.Context, addr *net.UDPAddr) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(TransferHandler); ok {
 			hdr.HandleTransfer(ctx, addr)
 		}
 	}
 }
 func (h *MultipleHandler) HandleCommandExecution(ctx *event.Context, command cmd.Command, args []string) {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(CommandExecutionHandler); ok {
 			hdr.HandleCommandExecution(ctx, command, args)
 		}
 	}
 }
 func (h *MultipleHandler) HandleQuit() {
-	for hdr, _ := range h.handlers {
+	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(QuitHandler); ok {
 			hdr.HandleQuit()
 		}

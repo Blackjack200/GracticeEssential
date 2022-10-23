@@ -2,24 +2,24 @@ package mhandler
 
 import (
 	"fmt"
+	"golang.org/x/exp/slices"
 	"reflect"
 	"sync"
 )
 
 type MultipleHandler struct {
-	mu *sync.Mutex
-	//mhandler -> nil
-	handlers map[any]any
+	mu       *sync.Mutex
+	handlers []any
 }
 
-func (h *MultipleHandler) Register(hdr interface{}) (unregister func()) {
+func (h *MultipleHandler) Register(hdr any) (unregister func()) {
 	r := reflect.ValueOf(hdr)
 	if r.NumMethod() < 1 {
 		panic(fmt.Errorf("invalid mhandler: %v", hdr))
 	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	h.handlers[hdr] = nil
+	h.handlers = append(h.handlers, hdr)
 	unregister = func() { h.Unregister(hdr) }
 	return
 }
@@ -30,15 +30,19 @@ func (h *MultipleHandler) Clear() {
 	h.handlers = nil
 }
 
-func (h *MultipleHandler) Unregister(hdr interface{}) {
+func (h *MultipleHandler) Unregister(hdr any) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	delete(h.handlers, hdr)
+	if idx := slices.IndexFunc(h.handlers, func(v any) bool {
+		return v == hdr
+	}); idx != -1 {
+		h.handlers = slices.Delete(h.handlers, idx, idx+1)
+	}
 }
 
 func New() *MultipleHandler {
 	return &MultipleHandler{
 		mu:       &sync.Mutex{},
-		handlers: make(map[any]any),
+		handlers: nil,
 	}
 }
