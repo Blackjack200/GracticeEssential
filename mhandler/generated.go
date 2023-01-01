@@ -4,8 +4,6 @@ import (
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/entity"
-	"github.com/df-mc/dragonfly/server/entity/damage"
-	"github.com/df-mc/dragonfly/server/entity/healing"
 	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player/skin"
@@ -51,23 +49,23 @@ type ChatHandler interface {
 type FoodLossHandler interface {
 	// HandleFoodLoss handles the food bar of a player depleting naturally, for example because the player was
 	// sprinting and jumping. ctx.Cancel() may be called to cancel the food points being lost.
-	HandleFoodLoss(ctx *event.Context, from, to int)
+	HandleFoodLoss(ctx *event.Context, from int, to *int)
 }
 type HealHandler interface {
 	// HandleHeal handles the player being healed by a healing source. ctx.Cancel() may be called to cancel
 	// the healing.
 	// The health added may be changed by assigning to *health.
-	HandleHeal(ctx *event.Context, health *float64, src healing.Source)
+	HandleHeal(ctx *event.Context, health *float64, src world.HealingSource)
 }
 type HurtHandler interface {
 	// HandleHurt handles the player being hurt by any damage source. ctx.Cancel() may be called to cancel the
 	// damage being dealt to the player.
 	// The damage dealt to the player may be changed by assigning to *damage.
-	HandleHurt(ctx *event.Context, damage *float64, attackImmunity *time.Duration, src damage.Source)
+	HandleHurt(ctx *event.Context, damage *float64, attackImmunity *time.Duration, src world.DamageSource)
 }
 type DeathHandler interface {
 	// HandleDeath handles the player dying to a particular damage cause.
-	HandleDeath(src damage.Source)
+	HandleDeath(src world.DamageSource, keepInv *bool)
 }
 type RespawnHandler interface {
 	// HandleRespawn handles the respawning of the player in the world. The spawn position passed may be
@@ -90,7 +88,7 @@ type BlockBreakHandler interface {
 	// HandleBlockBreak handles a block that is being broken by a player. ctx.Cancel() may be called to cancel
 	// the block being broken. A pointer to a slice of the block's drops is passed, and may be altered
 	// to change what items will actually be dropped.
-	HandleBlockBreak(ctx *event.Context, pos cube.Pos, drops *[]item.Stack)
+	HandleBlockBreak(ctx *event.Context, pos cube.Pos, drops *[]item.Stack, xp *int)
 }
 type BlockPlaceHandler interface {
 	// HandleBlockPlace handles the player placing a specific block at a position in its world. ctx.Cancel()
@@ -240,31 +238,31 @@ func (h *MultipleHandler) HandleChat(ctx *event.Context, message *string) {
 		}
 	}
 }
-func (h *MultipleHandler) HandleFoodLoss(ctx *event.Context, from, to int) {
+func (h *MultipleHandler) HandleFoodLoss(ctx *event.Context, from int, to *int) {
 	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(FoodLossHandler); ok {
 			hdr.HandleFoodLoss(ctx, from, to)
 		}
 	}
 }
-func (h *MultipleHandler) HandleHeal(ctx *event.Context, health *float64, src healing.Source) {
+func (h *MultipleHandler) HandleHeal(ctx *event.Context, health *float64, src world.HealingSource) {
 	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(HealHandler); ok {
 			hdr.HandleHeal(ctx, health, src)
 		}
 	}
 }
-func (h *MultipleHandler) HandleHurt(ctx *event.Context, damage *float64, attackImmunity *time.Duration, src damage.Source) {
+func (h *MultipleHandler) HandleHurt(ctx *event.Context, damage *float64, attackImmunity *time.Duration, src world.DamageSource) {
 	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(HurtHandler); ok {
 			hdr.HandleHurt(ctx, damage, attackImmunity, src)
 		}
 	}
 }
-func (h *MultipleHandler) HandleDeath(src damage.Source) {
+func (h *MultipleHandler) HandleDeath(src world.DamageSource, keepInv *bool) {
 	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(DeathHandler); ok {
-			hdr.HandleDeath(src)
+			hdr.HandleDeath(src, keepInv)
 		}
 	}
 }
@@ -289,10 +287,10 @@ func (h *MultipleHandler) HandleStartBreak(ctx *event.Context, pos cube.Pos) {
 		}
 	}
 }
-func (h *MultipleHandler) HandleBlockBreak(ctx *event.Context, pos cube.Pos, drops *[]item.Stack) {
+func (h *MultipleHandler) HandleBlockBreak(ctx *event.Context, pos cube.Pos, drops *[]item.Stack, xp *int) {
 	for _, hdr := range h.handlers {
 		if hdr, ok := hdr.(BlockBreakHandler); ok {
-			hdr.HandleBlockBreak(ctx, pos, drops)
+			hdr.HandleBlockBreak(ctx, pos, drops, xp)
 		}
 	}
 }
