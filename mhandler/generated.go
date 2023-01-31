@@ -9,6 +9,7 @@ import (
 	"github.com/df-mc/dragonfly/server/player/skin"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
+	"golang.org/x/exp/slices"
 	"net"
 	"time"
 )
@@ -190,219 +191,702 @@ type QuitHandler interface {
 }
 
 func (h *MultipleHandler) HandleMove(ctx *event.Context, newPos mgl64.Vec3, newYaw, newPitch float64) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._MoveHandler {
 		if hdr, ok := hdr.(MoveHandler); ok {
 			hdr.HandleMove(ctx, newPos, newYaw, newPitch)
 		}
 	}
 }
 func (h *MultipleHandler) HandleJump() {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._JumpHandler {
 		if hdr, ok := hdr.(JumpHandler); ok {
 			hdr.HandleJump()
 		}
 	}
 }
 func (h *MultipleHandler) HandleTeleport(ctx *event.Context, pos mgl64.Vec3) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._TeleportHandler {
 		if hdr, ok := hdr.(TeleportHandler); ok {
 			hdr.HandleTeleport(ctx, pos)
 		}
 	}
 }
 func (h *MultipleHandler) HandleChangeWorld(before, after *world.World) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ChangeWorldHandler {
 		if hdr, ok := hdr.(ChangeWorldHandler); ok {
 			hdr.HandleChangeWorld(before, after)
 		}
 	}
 }
 func (h *MultipleHandler) HandleToggleSprint(ctx *event.Context, after bool) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ToggleSprintHandler {
 		if hdr, ok := hdr.(ToggleSprintHandler); ok {
 			hdr.HandleToggleSprint(ctx, after)
 		}
 	}
 }
 func (h *MultipleHandler) HandleToggleSneak(ctx *event.Context, after bool) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ToggleSneakHandler {
 		if hdr, ok := hdr.(ToggleSneakHandler); ok {
 			hdr.HandleToggleSneak(ctx, after)
 		}
 	}
 }
 func (h *MultipleHandler) HandleChat(ctx *event.Context, message *string) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ChatHandler {
 		if hdr, ok := hdr.(ChatHandler); ok {
 			hdr.HandleChat(ctx, message)
 		}
 	}
 }
 func (h *MultipleHandler) HandleFoodLoss(ctx *event.Context, from int, to *int) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._FoodLossHandler {
 		if hdr, ok := hdr.(FoodLossHandler); ok {
 			hdr.HandleFoodLoss(ctx, from, to)
 		}
 	}
 }
 func (h *MultipleHandler) HandleHeal(ctx *event.Context, health *float64, src world.HealingSource) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._HealHandler {
 		if hdr, ok := hdr.(HealHandler); ok {
 			hdr.HandleHeal(ctx, health, src)
 		}
 	}
 }
 func (h *MultipleHandler) HandleHurt(ctx *event.Context, damage *float64, attackImmunity *time.Duration, src world.DamageSource) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._HurtHandler {
 		if hdr, ok := hdr.(HurtHandler); ok {
 			hdr.HandleHurt(ctx, damage, attackImmunity, src)
 		}
 	}
 }
 func (h *MultipleHandler) HandleDeath(src world.DamageSource, keepInv *bool) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._DeathHandler {
 		if hdr, ok := hdr.(DeathHandler); ok {
 			hdr.HandleDeath(src, keepInv)
 		}
 	}
 }
 func (h *MultipleHandler) HandleRespawn(pos *mgl64.Vec3, w **world.World) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._RespawnHandler {
 		if hdr, ok := hdr.(RespawnHandler); ok {
 			hdr.HandleRespawn(pos, w)
 		}
 	}
 }
 func (h *MultipleHandler) HandleSkinChange(ctx *event.Context, skin *skin.Skin) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._SkinChangeHandler {
 		if hdr, ok := hdr.(SkinChangeHandler); ok {
 			hdr.HandleSkinChange(ctx, skin)
 		}
 	}
 }
 func (h *MultipleHandler) HandleStartBreak(ctx *event.Context, pos cube.Pos) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._StartBreakHandler {
 		if hdr, ok := hdr.(StartBreakHandler); ok {
 			hdr.HandleStartBreak(ctx, pos)
 		}
 	}
 }
 func (h *MultipleHandler) HandleBlockBreak(ctx *event.Context, pos cube.Pos, drops *[]item.Stack, xp *int) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._BlockBreakHandler {
 		if hdr, ok := hdr.(BlockBreakHandler); ok {
 			hdr.HandleBlockBreak(ctx, pos, drops, xp)
 		}
 	}
 }
 func (h *MultipleHandler) HandleBlockPlace(ctx *event.Context, pos cube.Pos, b world.Block) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._BlockPlaceHandler {
 		if hdr, ok := hdr.(BlockPlaceHandler); ok {
 			hdr.HandleBlockPlace(ctx, pos, b)
 		}
 	}
 }
 func (h *MultipleHandler) HandleBlockPick(ctx *event.Context, pos cube.Pos, b world.Block) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._BlockPickHandler {
 		if hdr, ok := hdr.(BlockPickHandler); ok {
 			hdr.HandleBlockPick(ctx, pos, b)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemUse(ctx *event.Context) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ItemUseHandler {
 		if hdr, ok := hdr.(ItemUseHandler); ok {
 			hdr.HandleItemUse(ctx)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemUseOnBlock(ctx *event.Context, pos cube.Pos, face cube.Face, clickPos mgl64.Vec3) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ItemUseOnBlockHandler {
 		if hdr, ok := hdr.(ItemUseOnBlockHandler); ok {
 			hdr.HandleItemUseOnBlock(ctx, pos, face, clickPos)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemUseOnEntity(ctx *event.Context, e world.Entity) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ItemUseOnEntityHandler {
 		if hdr, ok := hdr.(ItemUseOnEntityHandler); ok {
 			hdr.HandleItemUseOnEntity(ctx, e)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemConsume(ctx *event.Context, item item.Stack) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ItemConsumeHandler {
 		if hdr, ok := hdr.(ItemConsumeHandler); ok {
 			hdr.HandleItemConsume(ctx, item)
 		}
 	}
 }
 func (h *MultipleHandler) HandleAttackEntity(ctx *event.Context, e world.Entity, force, height *float64, critical *bool) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._AttackEntityHandler {
 		if hdr, ok := hdr.(AttackEntityHandler); ok {
 			hdr.HandleAttackEntity(ctx, e, force, height, critical)
 		}
 	}
 }
 func (h *MultipleHandler) HandleExperienceGain(ctx *event.Context, amount *int) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ExperienceGainHandler {
 		if hdr, ok := hdr.(ExperienceGainHandler); ok {
 			hdr.HandleExperienceGain(ctx, amount)
 		}
 	}
 }
 func (h *MultipleHandler) HandlePunchAir(ctx *event.Context) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._PunchAirHandler {
 		if hdr, ok := hdr.(PunchAirHandler); ok {
 			hdr.HandlePunchAir(ctx)
 		}
 	}
 }
 func (h *MultipleHandler) HandleSignEdit(ctx *event.Context, oldText, newText string) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._SignEditHandler {
 		if hdr, ok := hdr.(SignEditHandler); ok {
 			hdr.HandleSignEdit(ctx, oldText, newText)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemDamage(ctx *event.Context, i item.Stack, damage int) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ItemDamageHandler {
 		if hdr, ok := hdr.(ItemDamageHandler); ok {
 			hdr.HandleItemDamage(ctx, i, damage)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemPickup(ctx *event.Context, i item.Stack) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ItemPickupHandler {
 		if hdr, ok := hdr.(ItemPickupHandler); ok {
 			hdr.HandleItemPickup(ctx, i)
 		}
 	}
 }
 func (h *MultipleHandler) HandleItemDrop(ctx *event.Context, e *entity.Item) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._ItemDropHandler {
 		if hdr, ok := hdr.(ItemDropHandler); ok {
 			hdr.HandleItemDrop(ctx, e)
 		}
 	}
 }
 func (h *MultipleHandler) HandleTransfer(ctx *event.Context, addr *net.UDPAddr) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._TransferHandler {
 		if hdr, ok := hdr.(TransferHandler); ok {
 			hdr.HandleTransfer(ctx, addr)
 		}
 	}
 }
 func (h *MultipleHandler) HandleCommandExecution(ctx *event.Context, command cmd.Command, args []string) {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._CommandExecutionHandler {
 		if hdr, ok := hdr.(CommandExecutionHandler); ok {
 			hdr.HandleCommandExecution(ctx, command, args)
 		}
 	}
 }
 func (h *MultipleHandler) HandleQuit() {
-	for _, hdr := range h.handlers {
+	for _, hdr := range h._QuitHandler {
 		if hdr, ok := hdr.(QuitHandler); ok {
 			hdr.HandleQuit()
 		}
 	}
+}
+
+type MultipleHandler struct {
+	_MoveHandler             []MoveHandler
+	_JumpHandler             []JumpHandler
+	_TeleportHandler         []TeleportHandler
+	_ChangeWorldHandler      []ChangeWorldHandler
+	_ToggleSprintHandler     []ToggleSprintHandler
+	_ToggleSneakHandler      []ToggleSneakHandler
+	_ChatHandler             []ChatHandler
+	_FoodLossHandler         []FoodLossHandler
+	_HealHandler             []HealHandler
+	_HurtHandler             []HurtHandler
+	_DeathHandler            []DeathHandler
+	_RespawnHandler          []RespawnHandler
+	_SkinChangeHandler       []SkinChangeHandler
+	_StartBreakHandler       []StartBreakHandler
+	_BlockBreakHandler       []BlockBreakHandler
+	_BlockPlaceHandler       []BlockPlaceHandler
+	_BlockPickHandler        []BlockPickHandler
+	_ItemUseHandler          []ItemUseHandler
+	_ItemUseOnBlockHandler   []ItemUseOnBlockHandler
+	_ItemUseOnEntityHandler  []ItemUseOnEntityHandler
+	_ItemConsumeHandler      []ItemConsumeHandler
+	_AttackEntityHandler     []AttackEntityHandler
+	_ExperienceGainHandler   []ExperienceGainHandler
+	_PunchAirHandler         []PunchAirHandler
+	_SignEditHandler         []SignEditHandler
+	_ItemDamageHandler       []ItemDamageHandler
+	_ItemPickupHandler       []ItemPickupHandler
+	_ItemDropHandler         []ItemDropHandler
+	_TransferHandler         []TransferHandler
+	_CommandExecutionHandler []CommandExecutionHandler
+	_QuitHandler             []QuitHandler
+}
+
+func (h *MultipleHandler) Register(hdr any) func() {
+	reg := false
+	var funcs []func()
+	if hdr, ok := hdr.(MoveHandler); ok {
+		if k := slices.Contains(h._MoveHandler, hdr); !k {
+			h._MoveHandler = append(h._MoveHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._MoveHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._MoveHandler = slices.Delete(h._MoveHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(JumpHandler); ok {
+		if k := slices.Contains(h._JumpHandler, hdr); !k {
+			h._JumpHandler = append(h._JumpHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._JumpHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._JumpHandler = slices.Delete(h._JumpHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(TeleportHandler); ok {
+		if k := slices.Contains(h._TeleportHandler, hdr); !k {
+			h._TeleportHandler = append(h._TeleportHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._TeleportHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._TeleportHandler = slices.Delete(h._TeleportHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ChangeWorldHandler); ok {
+		if k := slices.Contains(h._ChangeWorldHandler, hdr); !k {
+			h._ChangeWorldHandler = append(h._ChangeWorldHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ChangeWorldHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ChangeWorldHandler = slices.Delete(h._ChangeWorldHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ToggleSprintHandler); ok {
+		if k := slices.Contains(h._ToggleSprintHandler, hdr); !k {
+			h._ToggleSprintHandler = append(h._ToggleSprintHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ToggleSprintHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ToggleSprintHandler = slices.Delete(h._ToggleSprintHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ToggleSneakHandler); ok {
+		if k := slices.Contains(h._ToggleSneakHandler, hdr); !k {
+			h._ToggleSneakHandler = append(h._ToggleSneakHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ToggleSneakHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ToggleSneakHandler = slices.Delete(h._ToggleSneakHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ChatHandler); ok {
+		if k := slices.Contains(h._ChatHandler, hdr); !k {
+			h._ChatHandler = append(h._ChatHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ChatHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ChatHandler = slices.Delete(h._ChatHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(FoodLossHandler); ok {
+		if k := slices.Contains(h._FoodLossHandler, hdr); !k {
+			h._FoodLossHandler = append(h._FoodLossHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._FoodLossHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._FoodLossHandler = slices.Delete(h._FoodLossHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(HealHandler); ok {
+		if k := slices.Contains(h._HealHandler, hdr); !k {
+			h._HealHandler = append(h._HealHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._HealHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._HealHandler = slices.Delete(h._HealHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(HurtHandler); ok {
+		if k := slices.Contains(h._HurtHandler, hdr); !k {
+			h._HurtHandler = append(h._HurtHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._HurtHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._HurtHandler = slices.Delete(h._HurtHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(DeathHandler); ok {
+		if k := slices.Contains(h._DeathHandler, hdr); !k {
+			h._DeathHandler = append(h._DeathHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._DeathHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._DeathHandler = slices.Delete(h._DeathHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(RespawnHandler); ok {
+		if k := slices.Contains(h._RespawnHandler, hdr); !k {
+			h._RespawnHandler = append(h._RespawnHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._RespawnHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._RespawnHandler = slices.Delete(h._RespawnHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(SkinChangeHandler); ok {
+		if k := slices.Contains(h._SkinChangeHandler, hdr); !k {
+			h._SkinChangeHandler = append(h._SkinChangeHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._SkinChangeHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._SkinChangeHandler = slices.Delete(h._SkinChangeHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(StartBreakHandler); ok {
+		if k := slices.Contains(h._StartBreakHandler, hdr); !k {
+			h._StartBreakHandler = append(h._StartBreakHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._StartBreakHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._StartBreakHandler = slices.Delete(h._StartBreakHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(BlockBreakHandler); ok {
+		if k := slices.Contains(h._BlockBreakHandler, hdr); !k {
+			h._BlockBreakHandler = append(h._BlockBreakHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._BlockBreakHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._BlockBreakHandler = slices.Delete(h._BlockBreakHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(BlockPlaceHandler); ok {
+		if k := slices.Contains(h._BlockPlaceHandler, hdr); !k {
+			h._BlockPlaceHandler = append(h._BlockPlaceHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._BlockPlaceHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._BlockPlaceHandler = slices.Delete(h._BlockPlaceHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(BlockPickHandler); ok {
+		if k := slices.Contains(h._BlockPickHandler, hdr); !k {
+			h._BlockPickHandler = append(h._BlockPickHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._BlockPickHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._BlockPickHandler = slices.Delete(h._BlockPickHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ItemUseHandler); ok {
+		if k := slices.Contains(h._ItemUseHandler, hdr); !k {
+			h._ItemUseHandler = append(h._ItemUseHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ItemUseHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ItemUseHandler = slices.Delete(h._ItemUseHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ItemUseOnBlockHandler); ok {
+		if k := slices.Contains(h._ItemUseOnBlockHandler, hdr); !k {
+			h._ItemUseOnBlockHandler = append(h._ItemUseOnBlockHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ItemUseOnBlockHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ItemUseOnBlockHandler = slices.Delete(h._ItemUseOnBlockHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ItemUseOnEntityHandler); ok {
+		if k := slices.Contains(h._ItemUseOnEntityHandler, hdr); !k {
+			h._ItemUseOnEntityHandler = append(h._ItemUseOnEntityHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ItemUseOnEntityHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ItemUseOnEntityHandler = slices.Delete(h._ItemUseOnEntityHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ItemConsumeHandler); ok {
+		if k := slices.Contains(h._ItemConsumeHandler, hdr); !k {
+			h._ItemConsumeHandler = append(h._ItemConsumeHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ItemConsumeHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ItemConsumeHandler = slices.Delete(h._ItemConsumeHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(AttackEntityHandler); ok {
+		if k := slices.Contains(h._AttackEntityHandler, hdr); !k {
+			h._AttackEntityHandler = append(h._AttackEntityHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._AttackEntityHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._AttackEntityHandler = slices.Delete(h._AttackEntityHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ExperienceGainHandler); ok {
+		if k := slices.Contains(h._ExperienceGainHandler, hdr); !k {
+			h._ExperienceGainHandler = append(h._ExperienceGainHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ExperienceGainHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ExperienceGainHandler = slices.Delete(h._ExperienceGainHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(PunchAirHandler); ok {
+		if k := slices.Contains(h._PunchAirHandler, hdr); !k {
+			h._PunchAirHandler = append(h._PunchAirHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._PunchAirHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._PunchAirHandler = slices.Delete(h._PunchAirHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(SignEditHandler); ok {
+		if k := slices.Contains(h._SignEditHandler, hdr); !k {
+			h._SignEditHandler = append(h._SignEditHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._SignEditHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._SignEditHandler = slices.Delete(h._SignEditHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ItemDamageHandler); ok {
+		if k := slices.Contains(h._ItemDamageHandler, hdr); !k {
+			h._ItemDamageHandler = append(h._ItemDamageHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ItemDamageHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ItemDamageHandler = slices.Delete(h._ItemDamageHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ItemPickupHandler); ok {
+		if k := slices.Contains(h._ItemPickupHandler, hdr); !k {
+			h._ItemPickupHandler = append(h._ItemPickupHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ItemPickupHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ItemPickupHandler = slices.Delete(h._ItemPickupHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(ItemDropHandler); ok {
+		if k := slices.Contains(h._ItemDropHandler, hdr); !k {
+			h._ItemDropHandler = append(h._ItemDropHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._ItemDropHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._ItemDropHandler = slices.Delete(h._ItemDropHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(TransferHandler); ok {
+		if k := slices.Contains(h._TransferHandler, hdr); !k {
+			h._TransferHandler = append(h._TransferHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._TransferHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._TransferHandler = slices.Delete(h._TransferHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(CommandExecutionHandler); ok {
+		if k := slices.Contains(h._CommandExecutionHandler, hdr); !k {
+			h._CommandExecutionHandler = append(h._CommandExecutionHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._CommandExecutionHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._CommandExecutionHandler = slices.Delete(h._CommandExecutionHandler, idx, idx+1)
+			})
+		}
+	}
+	if hdr, ok := hdr.(QuitHandler); ok {
+		if k := slices.Contains(h._QuitHandler, hdr); !k {
+			h._QuitHandler = append(h._QuitHandler, hdr)
+			reg = true
+			funcs = append(funcs, func() {
+				idx := slices.Index(h._QuitHandler, hdr)
+				if idx == -1 {
+					panic("this should not happened")
+				}
+				h._QuitHandler = slices.Delete(h._QuitHandler, idx, idx+1)
+			})
+		}
+	}
+	if !reg {
+		panic("not a valid handler")
+	}
+	return func() {
+		for _, f := range funcs {
+			f()
+		}
+	}
+}
+func (h *MultipleHandler) Clear() {
+	h._MoveHandler = nil
+	h._JumpHandler = nil
+	h._TeleportHandler = nil
+	h._ChangeWorldHandler = nil
+	h._ToggleSprintHandler = nil
+	h._ToggleSneakHandler = nil
+	h._ChatHandler = nil
+	h._FoodLossHandler = nil
+	h._HealHandler = nil
+	h._HurtHandler = nil
+	h._DeathHandler = nil
+	h._RespawnHandler = nil
+	h._SkinChangeHandler = nil
+	h._StartBreakHandler = nil
+	h._BlockBreakHandler = nil
+	h._BlockPlaceHandler = nil
+	h._BlockPickHandler = nil
+	h._ItemUseHandler = nil
+	h._ItemUseOnBlockHandler = nil
+	h._ItemUseOnEntityHandler = nil
+	h._ItemConsumeHandler = nil
+	h._AttackEntityHandler = nil
+	h._ExperienceGainHandler = nil
+	h._PunchAirHandler = nil
+	h._SignEditHandler = nil
+	h._ItemDamageHandler = nil
+	h._ItemPickupHandler = nil
+	h._ItemDropHandler = nil
+	h._TransferHandler = nil
+	h._CommandExecutionHandler = nil
+	h._QuitHandler = nil
 }

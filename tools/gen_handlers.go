@@ -71,13 +71,14 @@ func genFromInterface(ifaceType *ast.InterfaceType, reflectionIface reflect.Type
 			originalMethodName := methodName.Name
 			typedIn, paramIn := getFuncIn(method, reflectionIface, originalMethodName)
 			newInterfaceName := strings.TrimPrefix(originalMethodName, "Handle") + "Handler"
+			newFieldName := "_" + newInterfaceName
 
 			f.Func().
 				Params(jen.Id("h").Id("*MultipleHandler")).Id(originalMethodName).
 				Params(typedIn...).
 				Block(
 					jen.For(
-						jen.List(jen.Id("_"), jen.Id("hdr")).Op(":=").Range().Id("h.handlers"),
+						jen.List(jen.Id("_"), jen.Id("hdr")).Op(":=").Range().Id("h." + newFieldName),
 					).Block(
 						jen.If(
 							jen.List(jen.Id("hdr"), jen.Id("ok")).Op(":=").Op("hdr").Assert(jen.Id(newInterfaceName)),
@@ -89,6 +90,74 @@ func genFromInterface(ifaceType *ast.InterfaceType, reflectionIface reflect.Type
 				)
 		}
 	}
+
+	var fields []jen.Code
+	var clearFields []jen.Code
+	for _, method := range ifaceType.Methods.List {
+		for _, methodName := range method.Names {
+			originalMethodName := methodName.Name
+			newInterfaceName := strings.TrimPrefix(originalMethodName, "Handle") + "Handler"
+			fields = append(fields, jen.Id("_"+newInterfaceName).Id("[]"+newInterfaceName))
+			clearFields = append(clearFields, jen.Id("h").Dot("_"+newInterfaceName).Op("=").Nil())
+		}
+	}
+	f.Type().Id("MultipleHandler").Struct(fields...)
+
+	blocks := []jen.Code{
+		jen.Id("reg").Op(":=").False(),
+		jen.Var().Id("funcs").Id("[]func()"),
+	}
+	for _, method := range ifaceType.Methods.List {
+		for _, methodName := range method.Names {
+			originalMethodName := methodName.Name
+			newInterfaceName := strings.TrimPrefix(originalMethodName, "Handle") + "Handler"
+			newFieldName := "_" + newInterfaceName
+			blocks = append(blocks, jen.If(
+				jen.List(jen.Id("hdr"), jen.Id("ok")).Op(":=").Op("hdr").Assert(jen.Id(newInterfaceName)),
+				jen.Id("ok"),
+			).Block(jen.If(
+				jen.Id("k").Op(":=").Id("slices.Contains").Call(jen.Id("h").Dot(newFieldName), jen.Id("hdr")),
+				jen.Id("!k"),
+			).Block(
+				jen.Id("h").Dot(newFieldName).Op("=").Append(jen.Id("h").Dot(newFieldName), jen.Id("hdr")),
+				jen.Id("reg").Op("=").True(),
+				jen.Id("funcs").Op("=").Append(jen.Id("funcs"),
+					jen.Func().Params().Block(
+						jen.Id("idx").Op(":=").Id("slices.Index").Call(jen.Id("h").Dot(newFieldName), jen.Id("hdr")),
+						jen.If(jen.Id("idx").Op("==").Id("-1")).Block(
+							jen.Panic(jen.Lit("this should not happened")),
+						),
+						jen.Id("h").Dot(newFieldName).Op("=").Id("slices.Delete").Call(
+							jen.Id("h").Dot(newFieldName),
+							jen.Id("idx"),
+							jen.Id("idx").Op("+1"),
+						),
+					),
+				),
+			),
+			))
+		}
+	}
+	blocks = append(blocks,
+		jen.If(jen.Id("!reg")).
+			Block(
+				jen.Panic(jen.Lit("not a valid handler")),
+			),
+		jen.Return(jen.Func().Params().Block(
+			jen.For(
+				jen.List(jen.Id("_"), jen.Id("f")),
+			).Op(":=").Range().Id("funcs").Block(jen.Id("f").Call()),
+		)),
+	)
+	f.Func().
+		Params(jen.Id("h").Id("*MultipleHandler")).Id("Register").
+		Params(jen.Id("hdr").Any()).Id("func()").
+		Block(blocks...)
+	f.Func().
+		Params(jen.Id("h").Id("*MultipleHandler")).Id("Clear").
+		Params().
+		Block(clearFields...)
+
 }
 
 func getFuncIn(method *ast.Field, reflectionIface reflect.Type, originalMethodName string) ([]jen.Code, []jen.Code) {
