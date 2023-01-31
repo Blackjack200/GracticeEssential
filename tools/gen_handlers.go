@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/dave/jennifer/jen"
 	"github.com/df-mc/dragonfly/server/player"
 	"go/ast"
@@ -9,6 +8,8 @@ import (
 	"go/doc"
 	"go/parser"
 	"go/token"
+	"io"
+	"os"
 	"path/filepath"
 	"reflect"
 	"runtime/debug"
@@ -21,14 +22,22 @@ func main() {
 	if i, ok := debug.ReadBuildInfo(); ok {
 		for _, m := range i.Deps {
 			if m.Path == "github.com/df-mc/dragonfly" {
-				gen(getDoc(m), f)
+				code := gen(getDoc(m), f)
+				w, err := os.OpenFile("./mhandler/generated.go", os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
+				if err != nil {
+					panic(err)
+				}
+				if _, err := io.WriteString(w, code); err != nil {
+					panic(err)
+				}
+				w.Close()
 				break
 			}
 		}
 	}
 }
 
-func gen(d *doc.Package, f *jen.File) {
+func gen(d *doc.Package, f *jen.File) string {
 	reflectionIface := reflect.TypeOf(player.NopHandler{})
 
 	for _, t := range d.Types {
@@ -38,7 +47,7 @@ func gen(d *doc.Package, f *jen.File) {
 			break
 		}
 	}
-	fmt.Printf("%#v", f)
+	return f.GoString()
 }
 
 func genFromInterface(ifaceType *ast.InterfaceType, reflectionIface reflect.Type, f *jen.File) {
