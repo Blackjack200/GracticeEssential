@@ -1,8 +1,16 @@
 package cmd
 
 import (
+	"github.com/Blackjack200/GracticeEssential/permission"
 	"github.com/df-mc/dragonfly/server/cmd"
 )
+
+var AllowImpl = func(s cmd.Source) bool {
+	if t, ok := s.(cmd.NamedTarget); ok {
+		return permission.OpEntry().Has(t.Name())
+	}
+	return false
+}
 
 func Setup() {
 	cmd.Register(cmd.New("help", "Provides help/list of commands.", []string{"?"}, Help{}))

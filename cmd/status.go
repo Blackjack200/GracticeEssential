@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/Blackjack200/GracticeEssential/permission"
 	"runtime"
 
 	"github.com/Blackjack200/GracticeEssential/server"
@@ -22,7 +21,7 @@ func (Status) Run(src cmd.Source, o *cmd.Output) {
 }
 
 func (Status) Allow(s cmd.Source) bool {
-	return permission.OpEntry().Has(s.Name())
+	return AllowImpl(s)
 }
 
 func getMemStats() runtime.MemStats {

@@ -115,26 +115,17 @@ func genFromInterface(ifaceType *ast.InterfaceType, reflectionIface reflect.Type
 			blocks = append(blocks, jen.If(
 				jen.List(jen.Id("hdr"), jen.Id("ok")).Op(":=").Op("hdr").Assert(jen.Id(newInterfaceName)),
 				jen.Id("ok"),
-			).Block(jen.If(
-				jen.Id("k").Op(":=").Id("slices.Contains").Call(jen.Id("h").Dot(newFieldName), jen.Id("hdr")),
-				jen.Id("!k"),
 			).Block(
 				jen.Id("h").Dot(newFieldName).Op("=").Append(jen.Id("h").Dot(newFieldName), jen.Id("hdr")),
 				jen.Id("reg").Op("=").True(),
 				jen.Id("funcs").Op("=").Append(jen.Id("funcs"),
 					jen.Func().Params().Block(
-						jen.Id("idx").Op(":=").Id("slices.Index").Call(jen.Id("h").Dot(newFieldName), jen.Id("hdr")),
-						jen.If(jen.Id("idx").Op("==").Id("-1")).Block(
-							jen.Panic(jen.Lit("this should not happened")),
-						),
-						jen.Id("h").Dot(newFieldName).Op("=").Id("slices.Delete").Call(
+						jen.Id("h").Dot(newFieldName).Op("=").Id("deleteVal").Call(
 							jen.Id("h").Dot(newFieldName),
-							jen.Id("idx"),
-							jen.Id("idx").Op("+1"),
+							jen.Id("hdr"),
 						),
 					),
 				),
-			),
 			))
 		}
 	}

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/Blackjack200/GracticeEssential/permission"
 	"github.com/Blackjack200/GracticeEssential/server"
 	"github.com/df-mc/dragonfly/server/cmd"
 )
@@ -18,5 +17,5 @@ func (Stop) Run(src cmd.Source, o *cmd.Output) {
 }
 
 func (Stop) Allow(s cmd.Source) bool {
-	return permission.OpEntry().Has(s.Name())
+	return AllowImpl(s)
 }

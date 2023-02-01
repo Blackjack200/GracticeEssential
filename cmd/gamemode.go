@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/Blackjack200/GracticeEssential/convert"
-	"github.com/Blackjack200/GracticeEssential/permission"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
 )
@@ -12,7 +11,7 @@ type GameMode struct {
 }
 
 func (g GameMode) Run(src cmd.Source, o *cmd.Output) {
-	if permission.OpEntry().Has(src.Name()) {
+	if AllowImpl(src) {
 		if p, ok := src.(*player.Player); ok {
 			mode, err := convert.ParseGameMode(g.GameMode)
 			if err != nil {
@@ -30,5 +29,5 @@ func (g GameMode) Run(src cmd.Source, o *cmd.Output) {
 }
 
 func (g GameMode) Allow(s cmd.Source) bool {
-	return permission.OpEntry().Has(s.Name())
+	return AllowImpl(s)
 }

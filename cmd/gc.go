@@ -3,14 +3,13 @@ package cmd
 import (
 	"runtime"
 
-	"github.com/Blackjack200/GracticeEssential/permission"
 	"github.com/df-mc/dragonfly/server/cmd"
 )
 
 type GC struct{}
 
 func (GC) Run(src cmd.Source, o *cmd.Output) {
-	if permission.OpEntry().Has(src.Name()) {
+	if AllowImpl(src) {
 		a, b := gc()
 		o.Printf("Allocated Memory freed: %v MB", (b.Sys-a.Sys)/1024/1024)
 	} else {
@@ -19,7 +18,7 @@ func (GC) Run(src cmd.Source, o *cmd.Output) {
 }
 
 func (GC) Allow(s cmd.Source) bool {
-	return permission.OpEntry().Has(s.Name())
+	return AllowImpl(s)
 }
 
 func gc() (runtime.MemStats, runtime.MemStats) {

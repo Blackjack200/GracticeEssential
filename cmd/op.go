@@ -25,7 +25,7 @@ func (b Op) Run(src cmd.Source, o *cmd.Output) {
 }
 
 func (Op) Allow(s cmd.Source) bool {
-	return permission.OpEntry().Has(s.Name())
+	return AllowImpl(s)
 }
 
 type DeOp struct {
@@ -42,5 +42,5 @@ func (b DeOp) Run(src cmd.Source, o *cmd.Output) {
 }
 
 func (DeOp) Allow(s cmd.Source) bool {
-	return permission.OpEntry().Has(s.Name())
+	return AllowImpl(s)
 }

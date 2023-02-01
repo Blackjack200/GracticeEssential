@@ -27,7 +27,7 @@ func (b Ban) Run(src cmd.Source, o *cmd.Output) {
 }
 
 func (b Ban) Allow(s cmd.Source) bool {
-	return permission.OpEntry().Has(s.Name())
+	return AllowImpl(s)
 }
 
 type Unban struct {
@@ -44,7 +44,7 @@ func (u Unban) Run(src cmd.Source, o *cmd.Output) {
 }
 
 func (u Unban) Allow(s cmd.Source) bool {
-	return permission.OpEntry().Has(s.Name())
+	return AllowImpl(s)
 }
 
 type BanList struct {
@@ -58,5 +58,5 @@ func (BanList) Run(src cmd.Source, o *cmd.Output) {
 }
 
 func (b BanList) Allow(s cmd.Source) bool {
-	return permission.OpEntry().Has(s.Name())
+	return AllowImpl(s)
 }
