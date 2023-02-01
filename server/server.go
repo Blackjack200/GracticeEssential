@@ -41,6 +41,8 @@ func Start() {
 	_startDate = time.Now()
 }
 
+var Stop = func() {}
+
 func readConfig() (server.UserConfig, error) {
 	c := server.DefaultConfig()
 	if !util.FileExist("config.toml") {

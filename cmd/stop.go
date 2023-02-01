@@ -13,7 +13,7 @@ func (Stop) Run(src cmd.Source, o *cmd.Output) {
 	for _, p := range server.Global().Players() {
 		p.SendCommandOutput(out)
 	}
-	_ = server.Global().Close()
+	go server.Global().Close()
 }
 
 func (Stop) Allow(s cmd.Source) bool {

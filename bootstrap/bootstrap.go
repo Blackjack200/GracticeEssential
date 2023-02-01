@@ -38,6 +38,7 @@ func Bootstrap(log *logrus.Logger, cfgFunc func(config *df.Config), playerFunc f
 	c.Run()
 	signalHandler(log, func() {
 		c.Stop()
+		server.Stop()
 	})
 	startFunc = func() {
 		server.Start()

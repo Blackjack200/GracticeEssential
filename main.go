@@ -21,14 +21,15 @@ func (m myChatHandler) HandleChat(ctx *event.Context, msg *string) {
 
 type myBlockBreakHandler struct{}
 
-func (myBlockBreakHandler) HandleBlockBreak(ctx *event.Context, _ cube.Pos, _ *[]item.Stack) {
+func (m myBlockBreakHandler) HandleBlockBreak(ctx *event.Context, _ cube.Pos, _ *[]item.Stack, _ *int) {
 	ctx.Cancel()
 }
 
 type myQuitHandler struct{}
 
-func (myQuitHandler) HandleQuit() {
+func (m myQuitHandler) HandleQuit() {
 	logrus.Info("Quited")
+
 }
 
 func main() {
