@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/df-mc/dragonfly/server/world"
 	"runtime"
 
 	"github.com/df-mc/dragonfly/server/cmd"
@@ -8,7 +9,7 @@ import (
 
 type GC struct{}
 
-func (GC) Run(src cmd.Source, o *cmd.Output) {
+func (GC) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	if AllowImpl(src) {
 		a, b := gc()
 		o.Printf("Allocated Memory freed: %v MB", (b.Sys-a.Sys)/1024/1024)

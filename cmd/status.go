@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/df-mc/dragonfly/server/world"
 	"runtime"
 
 	"github.com/Blackjack200/GracticeEssential/server"
@@ -9,7 +10,7 @@ import (
 
 type Status struct{}
 
-func (Status) Run(src cmd.Source, o *cmd.Output) {
+func (Status) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	stat := getMemStats()
 	o.Printf("Uptime: %v", server.Uptime().String())
 	o.Printf("Goroutine Count: %v", runtime.NumGoroutine())

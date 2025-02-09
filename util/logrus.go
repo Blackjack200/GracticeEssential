@@ -2,15 +2,21 @@ package util
 
 import (
 	"fmt"
+	"github.com/google/uuid"
+	"log/slog"
 	"strings"
 
 	"github.com/sandertv/gophertunnel/minecraft/text"
-	"github.com/sirupsen/logrus"
 )
 
 // LoggerSubscriber is an implementation of Subscriber that forwards messages sent to the logger
 type LoggerSubscriber struct {
-	Logger *logrus.Logger
+	Logger *slog.Logger
+	Uuid   uuid.UUID
+}
+
+func (c *LoggerSubscriber) UUID() uuid.UUID {
+	return c.Uuid
 }
 
 // Message ...

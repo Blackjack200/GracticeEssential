@@ -5,11 +5,11 @@ import (
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
 	"github.com/sandertv/gophertunnel/minecraft/text"
-	"github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 type source struct {
-	log *logrus.Logger
+	log *slog.Logger
 }
 
 func (src source) Name() string {

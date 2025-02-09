@@ -166,6 +166,9 @@ func getFuncIn(method *ast.Field, reflectionIface reflect.Type, originalMethodNa
 			panic(originalMethodName)
 		}
 		paramType := reflectionMethod.Type.In(seq).String()
+		if paramType == "*event.Context[*github.com/df-mc/dragonfly/server/player.Player]" {
+			paramType = "*event.Context[*player.Player]"
+		}
 		typedIn = append(typedIn, jen.List(names...).Id(paramType))
 		paramIn = append(paramIn, names...)
 		seq += len(names)

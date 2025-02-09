@@ -7,29 +7,28 @@ import (
 	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
-	"github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 type myChatHandler struct {
 	unreg func()
 }
 
-func (m myChatHandler) HandleChat(ctx *event.Context, msg *string) {
-	*msg = "You can break block now"
+func (m myChatHandler) HandleChat(ctx *event.Context[*player.Player], message *string) {
+	ctx.Val().Message("You can break block now")
 	m.unreg()
 }
 
 type myBlockBreakHandler struct{}
 
-func (m myBlockBreakHandler) HandleBlockBreak(ctx *event.Context, _ cube.Pos, _ *[]item.Stack, _ *int) {
+func (m myBlockBreakHandler) HandleBlockBreak(ctx *event.Context[*player.Player], pos cube.Pos, drops *[]item.Stack, xp *int) {
 	ctx.Cancel()
 }
 
 type myQuitHandler struct{}
 
-func (m myQuitHandler) HandleQuit() {
-	logrus.Info("Quited")
-
+func (m myQuitHandler) HandleQuit(p *player.Player) {
+	slog.Info("Quited")
 }
 
 func main() {

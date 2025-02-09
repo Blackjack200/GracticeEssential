@@ -2,12 +2,12 @@ package console
 
 import (
 	"bufio"
+	"log/slog"
 	"os"
 	"strings"
 	"sync"
 
 	"github.com/df-mc/dragonfly/server/cmd"
-	"github.com/sirupsen/logrus"
 	"go.uber.org/atomic"
 )
 
@@ -18,7 +18,7 @@ type Reader struct {
 	c    *source
 }
 
-func Setup(log *logrus.Logger) *Reader {
+func Setup(log *slog.Logger) *Reader {
 	r := &Reader{
 		once: sync.Once{},
 		run:  atomic.Bool{},
@@ -45,7 +45,7 @@ func (r *Reader) Run() {
 						r.c.SendCommandOutput(output)
 						continue
 					}
-					command.Execute(strings.TrimPrefix(strings.TrimPrefix(s, name), " "), r.c)
+					command.Execute(strings.TrimPrefix(strings.TrimPrefix(s, name), " "), r.c, nil)
 				}
 			}
 		}()

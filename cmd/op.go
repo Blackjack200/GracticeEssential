@@ -4,21 +4,22 @@ import (
 	"github.com/Blackjack200/GracticeEssential/permission"
 	"github.com/Blackjack200/GracticeEssential/server"
 	"github.com/df-mc/dragonfly/server/cmd"
+	"github.com/df-mc/dragonfly/server/world"
 )
 
 type Op struct {
 	Target string
 }
 
-func (b Op) Run(src cmd.Source, o *cmd.Output) {
+func (b Op) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	if b.Target == "" {
 		o.Error("Command argument error")
 		return
 	}
-	if t, found := server.Global().PlayerByName(b.Target); found {
+	if _, found := server.Global().PlayerByName(b.Target); found {
 		op := &cmd.Output{}
 		op.Print("You have been opped")
-		t.SendCommandOutput(op)
+		src.SendCommandOutput(op)
 	}
 	permission.OpEntry().Add(b.Target)
 	o.Printf("Opped: %v", b.Target)
@@ -32,7 +33,7 @@ type DeOp struct {
 	Target string
 }
 
-func (b DeOp) Run(src cmd.Source, o *cmd.Output) {
+func (b DeOp) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	if b.Target == "" {
 		o.Error("Command argument error")
 		return

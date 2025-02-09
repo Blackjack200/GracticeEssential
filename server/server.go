@@ -7,7 +7,7 @@ import (
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/pelletier/go-toml"
-	"github.com/sirupsen/logrus"
+	"log/slog"
 	"os"
 	"time"
 )
@@ -19,9 +19,9 @@ func Global() *server.Server {
 	return _global
 }
 
-func SetupFunc(l *logrus.Logger, cfgFunc func(*server.Config)) error {
+func SetupFunc(l *slog.Logger, cfgFunc func(*server.Config)) error {
 	util.PanicFunc(func(v interface{}) {
-		l.Panic(v)
+		panic(v)
 	})
 	if cfg, err := readConfig(); err != nil {
 		return err
@@ -66,7 +66,8 @@ func readConfig() (server.UserConfig, error) {
 }
 
 func Loop(h func(p *player.Player), end func()) {
-	for Global().Accept(h) {
+	for p := range Global().Accept() {
+		h(p)
 		if end != nil {
 			end()
 		}

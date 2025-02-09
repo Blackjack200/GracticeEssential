@@ -4,13 +4,14 @@ import (
 	"github.com/Blackjack200/GracticeEssential/convert"
 	"github.com/Blackjack200/GracticeEssential/server"
 	"github.com/df-mc/dragonfly/server/cmd"
+	"github.com/df-mc/dragonfly/server/world"
 )
 
 type DefaultGameMode struct {
 	GameMode string
 }
 
-func (d DefaultGameMode) Run(src cmd.Source, o *cmd.Output) {
+func (d DefaultGameMode) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	mode, err := convert.ParseGameMode(d.GameMode)
 	if err != nil {
 		o.Error(err)

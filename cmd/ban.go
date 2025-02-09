@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/df-mc/dragonfly/server/world"
 	"sort"
 	"strings"
 
@@ -13,14 +14,14 @@ type Ban struct {
 	Target string
 }
 
-func (b Ban) Run(src cmd.Source, o *cmd.Output) {
+func (b Ban) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	defer o.Messages()
 	if b.Target == "" {
 		o.Error("Command argument error")
 		return
 	}
 	if t, found := server.Global().PlayerByName(b.Target); found {
-		t.Disconnect("Banned by admin")
+		t.Close()
 	}
 	permission.BanEntry().Add(b.Target)
 	o.Printf("Banned player %v", b.Target)
@@ -34,7 +35,7 @@ type Unban struct {
 	Target string
 }
 
-func (u Unban) Run(src cmd.Source, o *cmd.Output) {
+func (u Unban) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	if u.Target == "" {
 		o.Error("Command argument error")
 		return
@@ -50,7 +51,7 @@ func (u Unban) Allow(s cmd.Source) bool {
 type BanList struct {
 }
 
-func (BanList) Run(src cmd.Source, o *cmd.Output) {
+func (BanList) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	arr := permission.BanEntry().GetAll()
 	sort.Strings(arr)
 	o.Printf("There are %v total banned players:", len(arr))

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/df-mc/dragonfly/server/world"
 	"sort"
 
 	"github.com/df-mc/dragonfly/server/cmd"
@@ -9,7 +10,7 @@ import (
 
 type Help struct{}
 
-func (Help) Run(_ cmd.Source, o *cmd.Output) {
+func (Help) Run(_ cmd.Source, o *cmd.Output, tx *world.Tx) {
 	o.Print("--- Showing help ---")
 	cmds := cmd.Commands()
 	var a []string

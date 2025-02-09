@@ -4,13 +4,14 @@ import (
 	"github.com/Blackjack200/GracticeEssential/convert"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
+	"github.com/df-mc/dragonfly/server/world"
 )
 
 type GameMode struct {
 	GameMode string
 }
 
-func (g GameMode) Run(src cmd.Source, o *cmd.Output) {
+func (g GameMode) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	if AllowImpl(src) {
 		if p, ok := src.(*player.Player); ok {
 			mode, err := convert.ParseGameMode(g.GameMode)

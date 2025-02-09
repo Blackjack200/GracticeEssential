@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/df-mc/dragonfly/server/world"
 
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
@@ -12,7 +13,7 @@ type Kick struct {
 	Reason string `optional:""`
 }
 
-func (b Kick) Run(src cmd.Source, o *cmd.Output) {
+func (b Kick) Run(src cmd.Source, o *cmd.Output, tx *world.Tx) {
 	if b.Target == nil {
 		o.Error("Target not found")
 		return
